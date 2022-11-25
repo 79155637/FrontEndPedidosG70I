@@ -1,3 +1,4 @@
+import {Router} from '@angular/router';
 import { Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { SeguridadService } from 'src/app/servicios/seguridad.service';
@@ -14,7 +15,7 @@ export class IdentificacionComponent implements OnInit {
     usuario: ['', [Validators.required, Validators.email]],
     clave: ['', [Validators.required]],
   });
- constructor(private fb: FormBuilder, private servicioSeguridad: SeguridadService) {}
+ constructor(private fb: FormBuilder, private servicioSeguridad: SeguridadService, private router: Router) {}
  
   ngOnInit(): void {
   }
@@ -25,7 +26,10 @@ export class IdentificacionComponent implements OnInit {
     let claveCifrada = cryptoJS.MD5(clave).toString();
    
     this.servicioSeguridad.Identificar(usuario, claveCifrada).subscribe((datos:any) => {
+      this.servicioSeguridad.AlmacenarSesion(datos);
+      this.router.navigate(["/inicio"]);
       //Ok
+      console.log(datos);
       alert("Datos CORRECTOS")
     }, (error: any) => {
       //KO
